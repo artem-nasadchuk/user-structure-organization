@@ -1,14 +1,12 @@
-import { User } from './models/User'; // Import your Sequelize models
-
-const users = [
-  { name: 'Admin', email: 'admin@example.com', password: 'password', role: 'admin' },
-  { name: 'Boss Smith', email: 'smith@example.com', password: 'password', role: 'boss' },
-  { name: 'User Smith', email: 'user@example.com', password: 'password', role: 'regular' },
-];
+import bcrypt from 'bcrypt';
+import { User } from './models/User';
 
 export async function seedUsers() {
   try {
-    await User.bulkCreate(users);
+    const hash = await bcrypt.hash('password', 10);
+    await User.bulkCreate([
+      { name: 'Admin', email: 'testadmin@example.com', password: hash, role: 'admin' },
+    ]);
     console.log('Users seeded successfully!');
   } catch (error) {
     console.error('Error seeding users:', error);

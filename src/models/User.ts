@@ -1,6 +1,12 @@
-import { DataTypes, Model } from 'sequelize'
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from "../utils/db";
-import { User as UserInterface } from '../types/User'
+import { User as UserInterface } from '../types/User';
+
+export enum UserRole {
+  Admin = 'admin',
+  Boss = 'boss',
+  Regular = 'regular',
+}
 
 export type UserModel = Model & UserInterface;
 
@@ -17,7 +23,7 @@ export const User = sequelize.define<UserModel>('user', {
   },
 
   role: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM(...Object.values(UserRole)),
     allowNull: false,
   },
 

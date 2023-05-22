@@ -1,5 +1,18 @@
-import { User } from '../models/User';
+import { User, UserRole } from '../models/User';
 import { UserModel } from '../models/User';
+import { User as UserInterface } from '../types/User';
+
+export function createUser(email: string, hash:string, role: UserRole, bossId: number) {
+  return User.create({ email, password: hash, role, bossId });
+}
+
+export function findByEmail(email: string) {
+  return User.findOne({ where: { email } });
+}
+
+export function getUser(userId: number) {
+  return User.findOne({ where: { id: userId } });
+}
 
 export async function getUsers(user: UserModel) {
   if (user.role === 'admin') {
@@ -11,11 +24,11 @@ export async function getUsers(user: UserModel) {
   }
 
   if (user.role === 'regular') {
-    return [user]
+    return [user];
   }
 }
 
-async function getSubordinates(ids: number[], users: (UserModel)[]): Promise<(UserModel)[]> {
+export async function getSubordinates(ids: number[], users: (UserModel)[]): Promise<(UserModel)[]> {
   if (!ids.length) {
     return users;
   }
@@ -27,3 +40,13 @@ async function getSubordinates(ids: number[], users: (UserModel)[]): Promise<(Us
   return await getSubordinates(subordinatesIds, updatedUsers);
 }
 
+export async function updateBossId(user: UserModel, bossId: number) {
+  user.bossId = bossId;
+  await user.save();
+
+  return user;
+}
+
+export function normalizeData({id, email, bossId, role}: UserInterface) {
+  return { id, email, bossId, role };
+}
